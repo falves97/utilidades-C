@@ -150,7 +150,12 @@ void trocar100(int *v)
 		}
 		else
 		{
-			cedulas[1][i] = valor / sum;
+			if(cedulas[0][i] % (sum - cedulas[0][i]) != 0) {
+				cedulas[1][i] = valor / sum;
+			}
+			else {
+				cedulas[1][i] = (valor / cedulas[0][i]) - 1;
+			}
 		}
 
 		valor = valor - cedulas[0][i] * cedulas[1][i];

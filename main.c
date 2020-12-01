@@ -3,128 +3,152 @@
 #include <math.h>
 
 int floatToInt(float );
-void decToBin(int );
-void decToHex(int );
-void decToOct(int );
+void decToBinHexOct(int , int );
+int sumElementos(int *, int);
+int positionMax(int *, int );
+int entrarCedulas(int *);
+int contains(int , int *, int );
+void trocar100(int *);
+int validarEntrada(int , int *, int );
 
 int main(int argc, char const *argv[])
 {
-		float n;
-    int nInt, base;
+		int v[5];
 
-		scanf("%f%d", &n, &base);
-
-		nInt = floatToInt(n);
-
-		switch(base) {
-			case 2:
-				decToBin(nInt);
-			break;
-			case 8:
-				decToOct(nInt);
-			break;
-			case 16:
-				decToHex(nInt);
-			break;
-		}
-    return 0;
+		trocar100(v);
 }
 
 int floatToInt(float n) {
     return (int) floor(n);
 }
 
-void decToBin(int n) {
+void decToBinHexOct(int n, int base) {
     char num[16];
-    char numBin[16];
+    char numConvertido[16];
     int count;
     int naux;
 
     count = 0;
     naux = n;
 
-		char binCaracteres[2] = {'0', '1'};
+	char caracteres[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
-    while (naux >= 2) //add condição ou mair que 16
+    while (naux >= base) //add condição ou mair que 16
     {
-        num[count] = binCaracteres[naux % 2];
+        num[count] = caracteres[naux % base];
         count++;
-        naux = naux / 2;
+        naux = naux / base;
     }
 
-    num[count] = binCaracteres[naux % 2];
+    num[count] = caracteres[naux % base];
 		count++;
 
-		numBin[count] = '\0';
+		numConvertido[count] = '\0';
 
     for (int i = 0; i < count; i++)
     {
-        numBin[i] = num[(count - i) - 1];
+        numConvertido[i] = num[(count - i) - 1];
     }
 
-    printf("%s\n", numBin);
+    printf("%s\n", numConvertido);
 }
 
-void decToHex(int n) {
-    char num[16];
-    char numHex[16];
-    int count;
-    int naux;
-
-    count = 0;
-    naux = n;
-
-		char hexCaracteres[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
-
-
-    while (naux >= 16) //add condição ou mair que 16
-    {
-        num[count] = hexCaracteres[naux % 16];
-        count++;
-        naux = naux / 16;
-    }
-
-    num[count] = hexCaracteres[naux % 16];
-		count++;
-
-		numHex[count] = '\0';
-
-    for (int i = 0; i < count; i++)
-    {
-        numHex[i] = num[(count - i) - 1];
-    }
-
-    printf("%s\n", numHex);
+int sumElementos(int *v, int len) {
+	int sum = 0;
+	for(int i = 0; i< len; i++) {
+		sum = sum + v[i];
+	}
+	return sum;
 }
 
-void decToOct(int n) {
-    char num[16];
-    char numOct[16];
-    int count;
-    int naux;
+int positionMax(int *v, int len) {
+	int max = 0;
+	for(int i = 1; i < len; i++) {
+		if(v[i] > v[max]) {
+			max = i;
+		}
+	}
 
-    count = 0;
-    naux = n;
+	return max;
+}
 
-		char hexCaracteres[8] = {'0', '1', '2', '3', '4', '5', '6', '7'};
+int validarEntrada(int n, int *v, int len){
+	if(n == 2 || n == 5 || n == 10 || n == 20 || n == 50) {
+		if(contains(n, v, len) == 0) {
+			return 1;
+		}
+	}
+	return 0;
+}
 
+int contains(int n, int *v, int len) {
+	for(int i = 0; i < len; i++) {
+		if (n == v[i]) {
+			return 1;
+		}
+	}
+	return 0;
+}
 
-    while (naux >= 8) //add condição ou mair que 16
-    {
-        num[count] = hexCaracteres[naux % 8];
-        count++;
-        naux = naux / 8;
-    }
+int entrarCedulas(int *v) {
+	int cedula;
+	int i;
 
-    num[count] = hexCaracteres[naux % 8];
-		count++;
+	i = 0;
 
-		numOct[count] = '\0';
+	do {
+		scanf("%d", &cedula);
+		if(validarEntrada(cedula, v, i) == 1) {
+			v[i] = cedula;
+			i++;
+		}
+	}while((i < 5 && cedula != 0) || i <= 0);
+	return i;
+}
 
-    for (int i = 0; i < count; i++)
-    {
-        numOct[i] = num[(count - i) - 1];
-    }
+void trocar100(int *v) {
+	int cedula;
+	int valor;
+	int sum;
+	int i;
+	int pos;
+	int cedulas[2][5];
+	int count;
 
-    printf("%s\n", numOct);
+	int len = entrarCedulas(v);
+	count = len;
+
+	valor = 100;
+
+	i = 0;
+	do {
+		pos = positionMax(v, len);
+		cedulas[0][i] = v[pos];
+		sum = sumElementos(v, len);
+
+		if(valor % cedulas[0][i] >= sum - cedulas[0][i]) {
+			cedulas[1][i] = valor / cedulas[0][i];
+		}
+		else {
+			cedulas[1][i] = valor / sum;
+		}
+	
+		valor = valor - cedulas[0][i] * cedulas[1][i];
+
+		v[pos] = 0;
+		i++;
+
+		pos = positionMax(v, len);
+	} while(v[pos] > 0);
+
+	if (valor == 0) {
+		for(int i = 0; i < len; i++) {
+			for(int j = cedulas[1][i]; j > 0; j--) {
+				printf("%d\n", cedulas[0][i]);
+			}
+		}
+	}
+	else {
+		printf("troca não permitida\n");
+	}
 }

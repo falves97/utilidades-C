@@ -144,14 +144,14 @@ void trocar100(int *v)
 		cedulas[0][i] = v[pos];
 		sum = sumElementos(v, len);
 
-		if (valor % cedulas[0][i] >= sum - cedulas[0][i])
+		if (cedulas[0][i] % (sum - cedulas[0][i]) != 0)
 		{
-			cedulas[1][i] = valor / cedulas[0][i];
+			cedulas[1][i] = (int) (valor / cedulas[0][i]) - (cedulas[0][i] / (sum - cedulas[0][i]));
 		}
 		else
 		{
-			if(cedulas[0][i] % (sum - cedulas[0][i]) != 0) {
-				cedulas[1][i] = valor / sum;
+			if(sum - v[pos] == 0) {
+				cedulas[1][i] = (valor / cedulas[0][i]);
 			}
 			else {
 				cedulas[1][i] = (valor / cedulas[0][i]) - 1;
